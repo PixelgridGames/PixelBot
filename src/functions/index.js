@@ -6,7 +6,6 @@ import { https as firebaseHttps } from "firebase-functions";
 
 const context = new Context();
 
-// Export firebase functions
 export const handleDiscordInteraction = firebaseHttps.onRequest((request, response) => {
     
     // Validate method
