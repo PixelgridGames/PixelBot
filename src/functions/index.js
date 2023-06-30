@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 import { Context } from "./context.mjs";
 import { getCommand } from "./commands.mjs";
 import { verifyRequest, getOrCreateVerificationCode, respondWithMessage } from "./discord.mjs";
@@ -8,7 +9,7 @@ const context = new Context();
 
 // Export firebase functions
 export const handleDiscordInteraction = firebaseHttps.onRequest((request, response) => {
-    
+
     // Validate method
     if (request.method !== "POST") {
         return response.status(405).end();
@@ -69,4 +70,21 @@ export const getDiscordVerificationCode = firebaseHttps.onRequest((request, resp
     }
 
     return getOrCreateVerificationCode(context, response, RobloxID, RobloxUsername.toLowerCase());
+});
+
+export const postDiscordComment = firebaseHttps.onRequest((request, response) => {
+    fetch("https://discord.com/api/webhooks/1121013903921524776/mWkoTif2lqC3mnDdmibFA9w9hQ71aYfpyuom8bPpsMOaEyEvuBPDBogh1cZ-7bceo4L1", {
+        method: "POST",
+        body: JSON.stringify({
+            "username": request.body.username,
+            "content": request.body.comment,
+        }),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).then((fetchResponse) => {
+        return respondWithJSON(response, 200);
+    }).catch(() => {
+        return respondWithJSON(response, 500, "Server error");
+    });
 });
